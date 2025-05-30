@@ -1,4 +1,4 @@
-package ed.lab.ed1final.controller;
+package ed.lab.ed1final.controller; //Kevin Palencia
 
 import ed.lab.ed1final.trie.Trie;
 import org.springframework.http.HttpStatus;
@@ -23,25 +23,25 @@ public class TrieController {
     @GetMapping("/{word}/count")
     public ResponseEntity<WordCountResponse> countWordsEqualTo(@PathVariable String word) {
         int count = trie.countWordsEqualTo(word);
-        WordCountResponse response = new WordCountResponse(word, count);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(new WordCountResponse(word, count));
     }
 
     @GetMapping("/{prefix}/prefix")
     public ResponseEntity<PrefixCountResponse> countWordsStartingWith(@PathVariable String prefix) {
         int count = trie.countWordsStartingWith(prefix);
-        PrefixCountResponse response = new PrefixCountResponse(prefix, count);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(new PrefixCountResponse(prefix, count)); // CAMBIO: campo debe llamarse 'prefix'
     }
 
     @DeleteMapping("/{word}")
     public ResponseEntity<Void> erase(@PathVariable String word) {
+        if (trie.countWordsEqualTo(word) == 0) {
+            return ResponseEntity.badRequest().build(); // CAMBIO: validar si existe antes de borrar
+        }
         trie.erase(word);
         return ResponseEntity.noContent().build();
     }
 
-    // DTO internos para las respuestas
     private record WordCountResponse(String word, int wordsEqualTo) {}
-    private record PrefixCountResponse(String word, int wordsStartingWith) {}
-}
 
+    private record PrefixCountResponse(String prefix, int wordsStartingWith) {} // CAMBIO: 'prefix' en vez de 'word'
+}
