@@ -1,25 +1,59 @@
 package ed.lab.ed1final.trie;
 
-import org.springframework.stereotype.Component;
+import java.util.HashMap;
+import java.util.Map;
 
-@Component
 public class Trie {
+
+    private static class Node {
+        Map<Character, Node> children = new HashMap<>();
+        int wordsEndingHere = 0;
+        int wordsThroughHere = 0;
+    }
+
+    private final Node root;
+
     public Trie() {
+        root = new Node();
     }
 
     public void insert(String word) {
-
+        Node current = root;
+        for (char c : word.toCharArray()) {
+            current.wordsThroughHere++;
+            current = current.children.computeIfAbsent(c, k -> new Node());
+        }
+        current.wordsThroughHere++;
+        current.wordsEndingHere++;
     }
 
     public int countWordsEqualTo(String word) {
-        return -1;
+        Node current = root;
+        for (char c : word.toCharArray()) {
+            if (!current.children.containsKey(c)) return 0;
+            current = current.children.get(c);
+        }
+        return current.wordsEndingHere;
     }
 
     public int countWordsStartingWith(String prefix) {
-        return -1;
+        Node current = root;
+        for (char c : prefix.toCharArray()) {
+            if (!current.children.containsKey(c)) return 0;
+            current = current.children.get(c);
+        }
+        return current.wordsThroughHere;
     }
 
     public void erase(String word) {
+        if (countWordsEqualTo(word) == 0) return;
 
+        Node current = root;
+        for (char c : word.toCharArray()) {
+            current.wordsThroughHere--;
+            current = current.children.get(c);
+        }
+        current.wordsThroughHere--;
+        current.wordsEndingHere--;
     }
 }
