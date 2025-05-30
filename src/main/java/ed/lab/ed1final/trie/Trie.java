@@ -1,4 +1,4 @@
-package ed.lab.ed1final.trie; //Kevin Palencia
+package ed.lab.ed1final.trie;
 
 import java.util.HashMap;
 import java.util.Map;
